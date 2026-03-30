@@ -49,6 +49,7 @@
                         <td><%= product.product_name %></td>
                         <td>R$ <%= parseFloat(product.preco).toFixed(2) %></td>
                         <td>
+                            <a href="/produtos/<%= product.id %>/editar" class="btn-edit">Editar</a>
                             <a href="/produtos/<%= product.id %>/deletar" class="btn-delete" onclick="return confirm('Tem certeza que deseja deletar?')">Deletar</a>
                         </td>
                     </tr>

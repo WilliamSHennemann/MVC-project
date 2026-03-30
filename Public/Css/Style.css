@@ -148,6 +148,17 @@ table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
+/* Ações na tabela */
+table td:last-child {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+table th:last-child {
+    width: 20%;
+}
+
 /* Info box */
 .info-box {
     background-color: #eaf3ff;

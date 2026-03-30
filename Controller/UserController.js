@@ -37,3 +37,36 @@ exports.getContato = (req, res) => {
 exports.getSobre = (req, res) => {
    res.render("sobre");
 };
+
+exports.editProduct = (req, res) => {
+   const { product_name, preco } = req.body;
+   const idProduct = req.params.id;
+   const product = products.find(p => p.id === parseInt(idProduct));
+   
+   if (product) {
+      product.product_name = product_name;
+      product.preco = preco;
+   }
+   
+   res.redirect("/produtos");
+};
+
+exports.showEditForm = (req, res) => {
+   const idProduct = req.params.id;
+   const product = products.find(p => p.id === parseInt(idProduct));
+   
+   if (product) {
+      res.render("produtoEditar", { product });
+   } else {
+      res.redirect("/produtos");
+   }
+};
+
+exports.getProductById = (req, res) => {
+   const idProduct = req.params.id;
+   products.forEach(product => {
+      if (product.id === parseInt(idProduct)) {
+         res.render("produtoDetalhes", { product });
+      }
+    });
+};
