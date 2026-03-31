@@ -1,4 +1,4 @@
-const { Product, products, deleteProductById } = require("../Model/UserModel");
+const { Product, products, deleteProductById, findProductById } = require("../Model/UserModel");
 
 exports.getIndex = (req, res) => {
    res.render("index", { products });
@@ -10,11 +10,12 @@ exports.getProducts = (req, res) => {
 
 exports.getProductbyId = (req, res) => {
    const idProduct = req.params.id;
-   products.forEach(product => {
-      if (product.id === parseInt(idProduct)) {
-         res.render("produtoDetalhes", { product });
-      }
-    });
+   const product = findProductById(idProduct);
+   if (product) {
+      res.render("produtoDetalhes", { product });
+   } else {
+      res.redirect("/produtos");
+   }
 };
 
 exports.createProduct = (req, res) => {
@@ -60,13 +61,4 @@ exports.showEditForm = (req, res) => {
    } else {
       res.redirect("/produtos");
    }
-};
-
-exports.getProductById = (req, res) => {
-   const idProduct = req.params.id;
-   products.forEach(product => {
-      if (product.id === parseInt(idProduct)) {
-         res.render("produtoDetalhes", { product });
-      }
-    });
 };
