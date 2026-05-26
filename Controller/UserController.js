@@ -1,18 +1,18 @@
 const { Product, products, deleteProductById, findProductById } = require("../Model/UserModel");
 
 exports.getIndex = (req, res) => {
-   res.render("index", { products });
+   res.render("index", { products, session: req.session });
 };
 
 exports.getProducts = (req, res) => {
-   res.render("produto", { products });
+   res.render("produto", { products, session: req.session });
 };
 
 exports.getProductbyId = (req, res) => {
    const idProduct = req.params.id;
    const product = findProductById(idProduct);
    if (product) {
-      res.render("produtoDetalhes", { product });
+      res.render("produtoDetalhes", { product, session: req.session });
    } else {
       res.redirect("/produtos");
    }
@@ -32,11 +32,11 @@ exports.deleteProduct = (req, res) => {
 };
 
 exports.getContato = (req, res) => {
-   res.render("contato");
+   res.render("contato", { session: req.session });
 };
 
 exports.getSobre = (req, res) => {
-   res.render("sobre");
+   res.render("sobre", { session: req.session });
 };
 
 exports.editProduct = (req, res) => {
@@ -57,7 +57,7 @@ exports.showEditForm = (req, res) => {
    const product = products.find(p => p.id === parseInt(idProduct));
    
    if (product) {
-      res.render("produtoEditar", { product });
+      res.render("produtoEditar", { product, session: req.session });
    } else {
       res.redirect("/produtos");
    }

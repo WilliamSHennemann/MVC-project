@@ -13,6 +13,12 @@
         <li><a href="/produtos">Produtos</a></li>
         <li><a href="/sobre">Sobre</a></li>
         <li><a href="/contato">Contato</a></li>
+        <li style="float: right;">
+            <span style="margin-right: 10px; color: white; font-weight: bold;">
+                👤 <%= session.user ? session.user.name : 'Visitante' %>
+            </span>
+            <a href="/logout" style="background-color: #e74c3c; padding: 8px 15px; border-radius: 5px;">Sair</a>
+        </li>
     </ul>
 </nav>
 <div class="container">
