@@ -3,24 +3,29 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WilliamSHennemann/Aula-05-24032026.git"
+    "url": "git+https://github.com/WilliamSHennemann/MVC-project.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/WilliamSHennemann/Aula-05-24032026/issues"
+    "url": "https://github.com/WilliamSHennemann/MVC-project/issues"
   },
-  "homepage": "https://github.com/WilliamSHennemann/Aula-05-24032026#readme",
+  "homepage": "https://github.com/WilliamSHennemann/MVC-project#readme",
   "description": "",
   "dependencies": {
     "body-parser": "^2.2.2",
     "ejs": "^5.0.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6"
   }
 }
