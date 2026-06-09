@@ -81,7 +81,7 @@ http://localhost:3000
 
 ## Variáveis de Ambiente
 
-Crie um arquivo `.env` na raiz do projeto seguindo o modelo abaixo. Não publique senhas reais no GitHub.
+Crie um arquivo `.env` na raiz do projeto seguindo o modelo abaixo.
 
 ```env
 PORT=3000
