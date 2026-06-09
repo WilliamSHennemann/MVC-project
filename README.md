@@ -35,7 +35,15 @@ A documentação interna foi estruturada com JSDoc para melhorar manutenção, l
 │   ├── authRoutes.js
 │   └── Routes.js
 ├── View/
-├── Public/
+│   ├── contato.ejs
+│   ├── index.ejs
+│   ├── login.ejs
+│   ├── produto.ejs
+│   ├── produtoDetalhes.ejs
+│   ├── produtoEditar.ejs
+│   └── sobre.ejs
+├── Public/Css
+│   └── Style.css
 └── server.js
 ```
 
