@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const app = express();
@@ -33,4 +34,6 @@ app.use(authRoutes);
 // Rotas protegidas (requerem autenticação)
 app.use(checkAuth, userRoutes);
 
-app.listen(3000, () => console.log("Servidor rodando na porta 3000"));
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Servidor rodando na porta ${process.env.PORT || 3000}`);
+});

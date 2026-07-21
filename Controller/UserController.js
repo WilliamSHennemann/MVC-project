@@ -1,80 +1,100 @@
-const { Product, products, deleteProductById, findProductById } = require("../Model/ProdutoModel");
+const {
+   listProducts,
+   findProductById,
+   createProduct,
+   updateProduct,
+   deleteProductById
+} = require("../Model/ProdutoModel");
 
 /**
- * Renderiza a página inicial com a lista de produtos.
+ * Renderiza a página inicial com a lista de produtos do banco de dados.
  *
  * @param {import('express').Request} req - Objeto de requisição do Express.
  * @param {import('express').Response} res - Objeto de resposta do Express.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-exports.getIndex = (req, res) => {
-   res.render("index", { products, session: req.session });
+exports.getIndex = async (req, res) => {
+   try {
+      const products = await listProducts();
+      res.render("index", { products, session: req.session });
+   } catch (error) {
+      console.error("Erro ao buscar produtos:", error.message);
+      res.status(500).send("Erro ao carregar a página inicial.");
+   }
 };
 
 /**
- * Renderiza a página de listagem de produtos.
+ * Renderiza a página de listagem de produtos consultando o banco de dados.
  *
  * @param {import('express').Request} req - Objeto de requisição do Express.
  * @param {import('express').Response} res - Objeto de resposta do Express.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-exports.getProducts = (req, res) => {
-   res.render("produto", { products, session: req.session });
+exports.getProducts = async (req, res) => {
+   try {
+      const products = await listProducts();
+      res.render("produto", { products, session: req.session });
+   } catch (error) {
+      console.error("Erro ao listar produtos:", error.message);
+      res.status(500).send("Erro ao listar produtos.");
+   }
 };
 
 /**
- * Renderiza os detalhes de um produto específico.
+ * Renderiza os detalhes de um produto específico consultado pelo ID.
  *
  * @param {import('express').Request<{ id: string }>} req - Requisição com o ID do produto nos parâmetros da rota.
  * @param {import('express').Response} res - Objeto de resposta do Express.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-exports.getProductbyId = (req, res) => {
+exports.getProductbyId = async (req, res) => {
    try {
-      const idProduct = req.params.id;
-      const product = findProductById(idProduct);
+      const product = await findProductById(req.params.id);
 
-      if (product) {
-         res.render("produtoDetalhes", { product, session: req.session });
-      } else {
-         res.redirect("/produtos");
+      if (!product) {
+         return res.redirect("/produtos");
       }
+
+      res.render("produtoDetalhes", { product, session: req.session });
    } catch (error) {
+      console.error("Erro ao buscar produto:", error.message);
       res.redirect("/produtos");
    }
 };
 
 /**
- * Cria um novo produto a partir dos dados enviados pelo formulário.
+ * Cria um novo produto no banco de dados a partir dos dados do formulário.
  *
- * @param {import('express').Request<{}, {}, { product_name: string, preco: string }>} req - Requisição com nome e preço no corpo.
+ * @param {import('express').Request<{}, {}, { product_name: string, preco: string }>} req - Requisição com os dados do produto no corpo.
  * @param {import('express').Response} res - Objeto de resposta do Express.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-exports.createProduct = (req, res) => {
+exports.createProduct = async (req, res) => {
    try {
       const { product_name, preco } = req.body;
-      const newId = products.length + 1;
-      const newProduct = new Product(newId, product_name, preco);
 
-      products.push(newProduct);
-   } finally {
+      await createProduct(product_name, preco);
       res.redirect("/produtos");
+   } catch (error) {
+      console.error("Erro ao criar produto:", error.message);
+      res.status(400).send("Não foi possível cadastrar o produto.");
    }
 };
 
 /**
- * Remove um produto pelo ID recebido na rota.
+ * Remove um produto do banco de dados pelo ID recebido na rota.
  *
  * @param {import('express').Request<{ id: string }>} req - Requisição com o ID do produto nos parâmetros da rota.
  * @param {import('express').Response} res - Objeto de resposta do Express.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-exports.deleteProduct = (req, res) => {
+exports.deleteProduct = async (req, res) => {
    try {
-      deleteProductById(req.params.id);
-   } finally {
+      await deleteProductById(req.params.id);
       res.redirect("/produtos");
+   } catch (error) {
+      console.error("Erro ao remover produto:", error.message);
+      res.status(400).send("Não foi possível remover o produto.");
    }
 };
 
@@ -101,39 +121,51 @@ exports.getSobre = (req, res) => {
 };
 
 /**
- * Atualiza os dados de um produto existente.
+ * Atualiza os dados de um produto existente no banco de dados.
  *
- * @param {import('express').Request<{ id: string }, {}, { product_name: string, preco: string }>} req - Requisição com ID na rota e dados do produto no corpo.
+ * @param {import('express').Request<{ id: string }, {}, { product_name: string, preco: string }>} req - Requisição com ID na rota e dados atualizados no corpo.
  * @param {import('express').Response} res - Objeto de resposta do Express.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-exports.editProduct = (req, res) => {
-   const { product_name, preco } = req.body;
-   const idProduct = Number.parseInt(req.params.id, 10);
-   const product = products.find((item) => item.id === idProduct);
+exports.editProduct = async (req, res) => {
+   try {
+      const { product_name, preco } = req.body;
 
-   if (product) {
-      product.product_name = product_name;
-      product.preco = Number(preco);
+      const updated = await updateProduct(
+         req.params.id,
+         product_name,
+         preco
+      );
+
+      if (!updated) {
+         return res.redirect("/produtos");
+      }
+
+      res.redirect("/produtos");
+   } catch (error) {
+      console.error("Erro ao editar produto:", error.message);
+      res.status(400).send("Não foi possível atualizar o produto.");
    }
-
-   res.redirect("/produtos");
 };
 
 /**
- * Renderiza o formulário de edição de um produto.
+ * Renderiza o formulário de edição de um produto consultado pelo ID.
  *
  * @param {import('express').Request<{ id: string }>} req - Requisição com o ID do produto nos parâmetros da rota.
  * @param {import('express').Response} res - Objeto de resposta do Express.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-exports.showEditForm = (req, res) => {
-   const idProduct = Number.parseInt(req.params.id, 10);
-   const product = products.find((item) => item.id === idProduct);
+exports.showEditForm = async (req, res) => {
+   try {
+      const product = await findProductById(req.params.id);
 
-   if (product) {
+      if (!product) {
+         return res.redirect("/produtos");
+      }
+
       res.render("produtoEditar", { product, session: req.session });
-   } else {
+   } catch (error) {
+      console.error("Erro ao carregar formulário de edição:", error.message);
       res.redirect("/produtos");
    }
 };

@@ -1,76 +1,19 @@
-/**
- * @typedef {Object} User
- * @property {number} id - Identificador único do usuário.
- * @property {string} name - Nome do usuário.
- * @property {string} email - Email usado para autenticação.
- * @property {string} password - Senha usada apenas no ambiente didático.
- */
+const db = require("../Config/db");
 
-/**
- * Lista em memória de usuários autorizados a acessar a aplicação.
- *
- * @type {User[]}
- */
-const users = [
-    {
-        id: 1,
-        name: "Yas",
-        email: "admin@example.com",
-        password: "123456"
-    },
-    {
-        id: 2,
-        name: "Joao Silva",
-        email: "joao@example.com",
-        password: "senha123"
-    },
-    {
-        id: 3,
-        name: "Maria Santos",
-        email: "maria@example.com",
-        password: "pass123"
-    }
-];
+const findUserByEmail = async (email) => {
+  const [users] = await db.execute(
+    `SELECT id, nome AS name, email, senha AS password
+     FROM usuarios
+     WHERE email = ?`,
+    [email]
+  );
 
-/**
- * Busca um usuário pelo email informado.
- *
- * @param {string} email - Email do usuário pesquisado.
- * @returns {User|undefined} Usuário encontrado ou undefined quando não existir.
- * @throws {Error} Lança erro quando o email não é informado.
- */
-const findUserByEmail = (email) => {
-    if (!email) {
-        throw new Error("Email é obrigatório.");
-    }
-
-    return users.find((user) => user.email === email);
+  return users[0];
 };
 
-/**
- * Valida as credenciais de login do usuário.
- *
- * @param {string} email - Email informado no login.
- * @param {string} password - Senha informada no login.
- * @returns {User|null} Usuário autenticado ou null quando as credenciais forem inválidas.
- * @throws {Error} Lança erro quando email ou senha não são informados.
- */
-const validateCredentials = (email, password) => {
-    if (!email || !password) {
-        throw new Error("Email e senha são obrigatórios.");
-    }
-
-    const user = findUserByEmail(email);
-
-    if (user && user.password === password) {
-        return user;
-    }
-
-    return null;
+const validateCredentials = async (email, password) => {
+  const user = await findUserByEmail(email);
+  return user && user.password === password ? user : null;
 };
 
-module.exports = {
-    users,
-    findUserByEmail,
-    validateCredentials
-};
+module.exports = { findUserByEmail, validateCredentials };

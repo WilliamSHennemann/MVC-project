@@ -1,16 +1,13 @@
-const mongoose = require('mongoose');
+const mysql = require("mysql2/promise");
 
-// String de conexão (em produção, use variáveis de ambiente .env)
-const uri = "mongodb://localhost:27017/seu_banco_de_dados";
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || "localhost",
+  port: Number(process.env.DB_PORT || 3306),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10
+});
 
-const conectarDB = async () => {
-    try {
-        await mongoose.connect(uri);
-        console.log("Conectado ao MongoDB com sucesso!");
-    } catch (error) {
-        console.error("❌ Erro ao conectar ao MongoDB:", error.message);
-        process.exit(1); // Encerra a aplicação em caso de falha crítica
-    }
-};
-
-module.exports = conectarDB;
+module.exports = pool;

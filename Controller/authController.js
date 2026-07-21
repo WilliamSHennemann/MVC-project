@@ -11,31 +11,20 @@ exports.getLogin = (req, res) => {
     res.render("login", { error: null });
 };
 
-/**
- * Processa as credenciais enviadas pelo formulário de login.
- *
- * @param {import('express').Request<{}, {}, { email: string, password: string }>} req - Requisição com email e senha no corpo.
- * @param {import('express').Response} res - Objeto de resposta do Express.
- * @returns {void}
- */
-exports.postLogin = (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const user = validateCredentials(email, password);
+exports.postLogin = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await validateCredentials(email, password);
 
-        if (user) {
-            req.session.user = {
-                id: user.id,
-                name: user.name,
-                email: user.email
-            };
-            res.redirect("/");
-        } else {
-            res.render("login", { error: "Email ou senha invalidos!" });
-        }
-    } catch (error) {
-        res.render("login", { error: "Email ou senha invalidos!" });
-    }
+  if (user) {
+    req.session.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email
+    };
+    return res.redirect("/");
+  }
+
+  res.render("login", { error: "Email ou senha invalidos!" });
 };
 
 /**
