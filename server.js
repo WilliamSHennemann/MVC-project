@@ -1,3 +1,4 @@
+const path = require("path");
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
@@ -9,10 +10,10 @@ const bodyParser = require("body-parser");
 
 // Configuração do template engine
 app.set("view engine", "ejs");
-app.set("views", "./View"); 
+app.set("views", path.join(__dirname, "View"));
 
 // Middlewares estáticos
-app.use(express.static("./Public"));
+app.use(express.static(path.join(__dirname, "Public")));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Configuração de sessão
